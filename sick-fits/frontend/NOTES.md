@@ -13,3 +13,6 @@ Overwriting the app.js is very simple and can done by creating a file called _ap
 
 Components folder is for everything not related to routing, these should be the parts that mark up your application like a regular react app.
 
+Because next.js is compiled on the server, there is a css flash/flicker when using styled components as it done on the client side. To avoid this we need to tell next.js to compile everything before is shown to the user.
+
+Next.js and styled components have a way using an _document.js file, that will crawl all your components figure out the CSS that it needs and put it into the document before the page is sent from the server that way there is no flicker. 
