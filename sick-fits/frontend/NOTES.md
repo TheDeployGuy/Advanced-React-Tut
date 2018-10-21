@@ -16,3 +16,22 @@ Components folder is for everything not related to routing, these should be the 
 Because next.js is compiled on the server, there is a css flash/flicker when using styled components as it done on the client side. To avoid this we need to tell next.js to compile everything before is shown to the user.
 
 Next.js and styled components have a way using an _document.js file, that will crawl all your components figure out the CSS that it needs and put it into the document before the page is sent from the server that way there is no flicker. 
+
+## Module #3
+GraphQL is a specification built to serve and fetching data. It is alternative to Rest, it is agnostic to the language. 
+
+GraphQL has a single endpoint that you hit, you send it a query and it will return the data that you requested via your query. e.g:
+```graphql
+query {
+    items {
+        id
+        title
+    }
+}
+```
+Fetch me the id, and title for all the items, this is the power of GraphQL, you can specific exactly what you need.
+
+GraphQL is a typed language, it supports for primitive types(String, Boolean, Int) and custom types (Item). You can also specify relationships between the data. 
+
+GraphQL also has the concept of mutations, which is put, updating and deleting data. 
+GraphQL by default has no way to filter, sorting but Prisma which is a GraphQL implementation has this for you via functions you can pass in via your query. Resolvers on the server, resolve the query being passed via the client. Resolves basically tells grapgql where the data comes from. (Database, network requests etc). 
