@@ -35,3 +35,20 @@ GraphQL is a typed language, it supports for primitive types(String, Boolean, In
 
 GraphQL also has the concept of mutations, which is put, updating and deleting data. 
 GraphQL by default has no way to filter, sorting but Prisma which is a GraphQL implementation has this for you via functions you can pass in via your query. Resolvers on the server, resolve the query being passed via the client. Resolves basically tells grapgql where the data comes from. (Database, network requests etc). 
+
+### Prisma
+
+Prisma is an open-source GraphQL interface that provides a set of CRUD api's for MySQL or Postgres, MongoDB etc. It is a bit like an GraphQL ORM that allows you to use any database you require. Good thing is you won't be writing database specfic code, it is all done via Prisma. Prisma can be provided as a docker container or a software as a service. 
+
+Primsa has a handy command line tool(prisma) that will allow you to setup whatever way you need, (docker, demo, existing service). 
+```sh
+    npm i -g prisma
+    prisma login
+    prisma init
+```
+
+After, you follow the steps from init you will end up with two files, datamodel and prisma.yml file. Prima.yml has the configuration for your prisma instance. You should swap the hardcoded values for environment variables usin a .env file and referencing via ${ENV:VARIABLES_NAME}. It is important for production app you add a secret to the .yml file as this will lock down the prisma endpoint.
+
+When you add fields for change your data model you will want them changes pushed up to your prima instance for that you need to setup a hooks configuration variables in the prisma.yml file. After your hooks run there is a generated prisma.graphql file, which is the entire graphql schema for prisma. It creates the GraphQL endpoint file and mutations available that make up prisma and downloads the schema. 
+
+Each time you make a change to your datamodel it must push via the deploy command.
