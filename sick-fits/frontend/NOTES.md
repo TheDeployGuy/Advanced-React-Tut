@@ -52,3 +52,12 @@ After, you follow the steps from init you will end up with two files, datamodel 
 When you add fields for change your data model you will want them changes pushed up to your prima instance for that you need to setup a hooks configuration variables in the prisma.yml file. After your hooks run there is a generated prisma.graphql file, which is the entire graphql schema for prisma. It creates the GraphQL endpoint file and mutations available that make up prisma and downloads the schema. 
 
 Each time you make a change to your datamodel it must push via the deploy command.
+
+## GraphQL Yoga
+
+Yoga, is an express GraphQL server. It connects to your GraphQL prisma DB and pulls that data back and forward. 
+
+Resolvers, answer the question where does this data come from or what does this data do in the database. There are two types of resolvers:
+
+Mutations: Used to push data to your database.
+Query: Used to fetch the data.
