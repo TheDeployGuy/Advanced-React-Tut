@@ -13,6 +13,6 @@ server.start({
         origin: process.env.FRONTEND_URL
     }
 }, 
-deets => {
-    console.log(`Server is now up and running!!`);
+({port}) => {
+    console.log(`Server is now up and running!! on http://localhost:${port}` );
 })
