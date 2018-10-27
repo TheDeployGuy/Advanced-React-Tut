@@ -61,3 +61,11 @@ Resolvers, answer the question where does this data come from or what does this 
 
 Mutations: Used to push data to your database.
 Query: Used to fetch the data.
+
+## Steps to Adding a new piece of Data to GraphQL
+
+1. Edit the Data Model, everytime you update your datamodel you MUST update prisma and get the new schema(prisma.graphql) (can be done via npm run deploy)
+2. Update schema.graphql (Which will be our public facing API), to add mutations for your new piece of data. (If your types returned match your types in prisma.graphql, you can import all the types from prisma.graphql into your schema.graphql via a comment import (# import * from ./generated/prisma.graphql))
+3. Update mutations.js resolvers with the how to update that piece of information. (i.e. doing the database interaction and actually updating the information)
+4. Update schema.grapql to add your queries for the new piece of data.
+5. Update query.js resolvers with how to query that piece of information. 
