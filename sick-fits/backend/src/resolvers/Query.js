@@ -6,11 +6,14 @@
     ctx: Context that we setup in createServer, which we pass the req details as well as the db connection(e.g Prisma)
     info: Information about the request
 */
+const { forwardTo } = require('prisma-binding');
+
 const Query = {
-    async items(parent, args, ctx, info) {
-        const items = await ctx.db.query.items();
-        return items;
-    }
+    items: forwardTo('db') // If your query matches exactly query in your prisma model(i.e no custom logic to check auth status or anything), you can simply just forward the query onto prisma.
+    //async items(parent, args, ctx, info) {
+    //    const items = await ctx.db.query.items();
+    //    return items;
+    // }
 };
 
 module.exports = Query;
