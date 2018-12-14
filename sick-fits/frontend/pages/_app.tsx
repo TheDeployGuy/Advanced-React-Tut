@@ -3,11 +3,16 @@ import Page from '../components/Page';
 import { ApolloProvider } from 'react-apollo';
 import withData from '../lib/withData';
 
+interface PageProps{
+  query: string;
+}
 class MyApp extends App {
 
   // This will run before the render
   static async getInitialProps({Component, ctx}) {
-    let pageProps = {};
+    let pageProps: PageProps = {
+      query: ''
+    };
     if(Component.getInitialProps) {
       pageProps = await Component.getInitialProps(ctx)
     }
