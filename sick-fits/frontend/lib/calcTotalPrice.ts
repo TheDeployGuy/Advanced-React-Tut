@@ -1,8 +1,6 @@
-
-const calcTotalPrice = (cart) : number => (
-   cart.reduce((tally, cartItem) => {
+const calcTotalPrice = (cart): number =>
+  cart.reduce((tally, cartItem) => {
     if (!cartItem.item) return tally;
     return tally + cartItem.quantity * cartItem.item.price;
-  }, 0)
-  )
+  }, 0);
 export default calcTotalPrice;
