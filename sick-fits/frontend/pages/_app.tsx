@@ -8,11 +8,13 @@ interface PageProps {
   query: string;
 }
 
-class MyApp extends App<{
+interface AppProps {
   Component: React.ReactNode;
   apollo: ApolloClient<{}>;
   pageProps: PageProps;
-}> {
+}
+
+class MyApp extends App<AppProps> {
   // This will run before the render
   static async getInitialProps({ Component, ctx }) {
     let pageProps: PageProps = {
