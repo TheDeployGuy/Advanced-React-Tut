@@ -46,4 +46,5 @@ class MyApp extends App<AppProps> {
   }
 }
 
+// Use HoC to provide apollo to rest of application.
 export default withData(MyApp);

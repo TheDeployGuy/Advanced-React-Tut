@@ -1,8 +1,9 @@
-import * as React from "react";
+import React from "react";
+import Items from "../components/Items";
 
 const Home: React.SFC<{}> = () => (
   <div>
-    <p>This is the homepage</p>
+    <Items />
   </div>
 );
 export default Home;
