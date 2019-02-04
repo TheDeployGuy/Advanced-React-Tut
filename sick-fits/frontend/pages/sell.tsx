@@ -1,8 +1,9 @@
-import * as React from "react";
+import React from "react";
+import CreateItem from "../components/CreateItem";
 
 const Sell: React.SFC<{}> = () => (
   <div>
-    <p>Sell!</p>
+    <CreateItem />
   </div>
 );
 

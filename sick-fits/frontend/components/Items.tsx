@@ -41,6 +41,7 @@ export default class Items extends React.Component {
             // It is a good idea to check the loading and error states as the component may render and if you are trying to access a property on the data object that hasn't resolved you will get 'cannot read property X of undefined'
             if (loading) return <p>Loading</p>;
             if (error) return <p>Error: {error.message} </p>;
+            console.log(data);
             return (
               <Itemslist>
                 {data.items.map(item => (
