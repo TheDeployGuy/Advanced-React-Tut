@@ -32,6 +32,7 @@ interface CreateItemState {
   image: string;
   largeImage: string;
   price: number;
+  imageUploading: boolean;
 }
 
 export default class CreateItem extends React.Component<{}, CreateItemState> {
@@ -40,7 +41,8 @@ export default class CreateItem extends React.Component<{}, CreateItemState> {
     description: "",
     image: "",
     largeImage: "",
-    price: 0
+    price: 0,
+    imageUploading: false
   };
 
   handleInputChange = e => {
@@ -66,6 +68,10 @@ export default class CreateItem extends React.Component<{}, CreateItemState> {
     data.append("file", files[0]);
     data.append("upload_preset", "sickfits");
 
+    this.setState({
+      imageUploading: true
+    });
+
     const res = await fetch(
       "https://api.cloudinary.com/v1_1/dbhba8phc/image/upload",
       {
@@ -75,10 +81,10 @@ export default class CreateItem extends React.Component<{}, CreateItemState> {
     );
 
     const file = await res.json();
-    console.log(file);
     this.setState({
       image: file.secure_url,
-      largeImage: file.eager[0].secure_url
+      largeImage: file.eager[0].secure_url,
+      imageUploading: false
     });
   };
   render() {
@@ -88,7 +94,10 @@ export default class CreateItem extends React.Component<{}, CreateItemState> {
           <Form onSubmit={e => this.onSubmit(e, createItem)}>
             <Error error={error} />
             {/* Disabled on fieldset allows us to disable the form while the form is being submitted, aria-busy allows for accessibility and we can use it to style */}
-            <fieldset disabled={loading} aria-busy={loading}>
+            <fieldset
+              disabled={loading || this.state.imageUploading}
+              aria-busy={loading || this.state.imageUploading}
+            >
               <label htmlFor="file">
                 Image
                 <input
