@@ -88,6 +88,7 @@ export default class CreateItem extends React.Component<{}, CreateItemState> {
     });
   };
   render() {
+    const { imageUploading } = this.state;
     return (
       <Mutation mutation={CREATE_ITEM_MUTATION} variables={this.state}>
         {(createItem, { loading, error }) => (
@@ -95,8 +96,8 @@ export default class CreateItem extends React.Component<{}, CreateItemState> {
             <Error error={error} />
             {/* Disabled on fieldset allows us to disable the form while the form is being submitted, aria-busy allows for accessibility and we can use it to style */}
             <fieldset
-              disabled={loading || this.state.imageUploading}
-              aria-busy={loading || this.state.imageUploading}
+              disabled={loading || imageUploading}
+              aria-busy={loading || imageUploading}
             >
               <label htmlFor="file">
                 Image
