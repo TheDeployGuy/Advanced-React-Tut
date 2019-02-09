@@ -1,10 +1,10 @@
 import React from "react";
 import { Mutation, MutationFn } from "react-apollo";
 import gql from "graphql-tag";
-import Form from "./styles/Form";
-import formatMoney from "../lib/formatMoney";
-import Error from "../components/ErrorMessage";
 import Router from "next/router";
+import Form from "./styles/Form";
+import Error from "../components/ErrorMessage";
+import formatMoney from "../lib/formatMoney";
 
 const CREATE_ITEM_MUTATION = gql`
   mutation CREATE_ITEM_MUTATION(
@@ -52,10 +52,9 @@ export default class CreateItem extends React.Component<{}, CreateItemState> {
     this.setState({ [name]: val } as any);
   };
 
-  onSubmit = async (e, createItem) => {
+  createItem = async (e, createItemMutation) => {
     e.preventDefault();
-    const res = await createItem();
-    console.log(res);
+    const res = await createItemMutation();
     Router.push({
       pathname: "/item",
       query: { id: res.data.createItem.id }
@@ -92,7 +91,7 @@ export default class CreateItem extends React.Component<{}, CreateItemState> {
     return (
       <Mutation mutation={CREATE_ITEM_MUTATION} variables={this.state}>
         {(createItem, { loading, error }) => (
-          <Form onSubmit={e => this.onSubmit(e, createItem)}>
+          <Form onSubmit={e => this.createItem(e, createItem)}>
             <Error error={error} />
             {/* Disabled on fieldset allows us to disable the form while the form is being submitted, aria-busy allows for accessibility and we can use it to style */}
             <fieldset

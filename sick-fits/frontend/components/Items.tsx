@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Item from "../components/Item";
 
 // GQL is a function that takes a GQL query, it is advised to keep the queries in the files they are used in, if they are going to be used anywhere else then it can be exported and imported.
-const ALL_ITEMS_QUERY = gql`
+export const ALL_ITEMS_QUERY = gql`
   query ALL_ITEMS_QUERY {
     items {
       id

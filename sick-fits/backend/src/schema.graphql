@@ -1,9 +1,19 @@
 # import * from './generated/prisma.graphql'
 
 type Mutation {
-    createItem(title: String, description: String, price: Int, image: String, largeImage: String): Item!
+  createItem(
+    title: String
+    description: String
+    price: Int
+    image: String
+    largeImage: String
+  ): Item!
+  updateItem(id: ID!, title: String, description: String, price: Int): Item!
+  deleteItem(id: ID!): Item
 }
 
 type Query {
-    items: [Item]!
+  items: [Item]!
+  #   ItemWhereUniqueInput comes from prisma.graphql, you could just add an ID here but it is good to keep it the same as primsa is expecting.
+  item(where: ItemWhereUniqueInput!): Item
 }

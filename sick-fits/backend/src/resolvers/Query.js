@@ -9,7 +9,8 @@
 const { forwardTo } = require("prisma-binding");
 
 const Query = {
-  items: forwardTo("db") // If your query matches exactly query in your prisma model(i.e no custom logic to check auth status or anything), you can simply just forward the query onto prisma.
+  items: forwardTo("db"), // If your query matches exactly query in your prisma model(i.e no custom logic to check auth status or anything), you can simply just forward the query onto prisma.
+  item: forwardTo("db")
   //async items(parent, args, ctx, info) {
   //    const items = await ctx.db.query.items();
   //    return items;

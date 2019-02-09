@@ -1,7 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import { Mutation, Query } from "react-apollo";
 import gql from "graphql-tag";
-import Router from "next/router";
 import Form from "./styles/Form";
 import formatMoney from "../lib/formatMoney";
 import Error from "./ErrorMessage";
@@ -37,24 +36,29 @@ const UPDATE_ITEM_MUTATION = gql`
   }
 `;
 
-class UpdateItem extends Component {
+export default class UpdateItem extends React.Component<
+  {
+    id: string;
+  },
+  {}
+> {
   state = {};
-  handleChange = e => {
+
+  handleInputChange = e => {
     const { name, type, value } = e.target;
     const val = type === "number" ? parseFloat(value) : value;
-    this.setState({ [name]: val });
+
+    this.setState({ [name]: val } as any);
   };
+
   updateItem = async (e, updateItemMutation) => {
     e.preventDefault();
-    console.log("Updating Item!!");
-    console.log(this.state);
     const res = await updateItemMutation({
       variables: {
         id: this.props.id,
         ...this.state
       }
     });
-    console.log("Updated!!");
   };
 
   render() {
@@ -67,12 +71,13 @@ class UpdateItem extends Component {
       >
         {({ data, loading }) => {
           if (loading) return <p>Loading...</p>;
-          if (!data.item) return <p>No Item Found for ID {this.props.id}</p>;
+          if (!data.item) return <p>No Item for {this.props.id}</p>;
           return (
             <Mutation mutation={UPDATE_ITEM_MUTATION} variables={this.state}>
               {(updateItem, { loading, error }) => (
                 <Form onSubmit={e => this.updateItem(e, updateItem)}>
                   <Error error={error} />
+                  {/* Disabled on fieldset allows us to disable the form while the form is being submitted, aria-busy allows for accessibility and we can use it to style */}
                   <fieldset disabled={loading} aria-busy={loading}>
                     <label htmlFor="title">
                       Title
@@ -83,7 +88,7 @@ class UpdateItem extends Component {
                         placeholder="Title"
                         required
                         defaultValue={data.item.title}
-                        onChange={this.handleChange}
+                        onChange={this.handleInputChange}
                       />
                     </label>
 
@@ -96,7 +101,7 @@ class UpdateItem extends Component {
                         placeholder="Price"
                         required
                         defaultValue={data.item.price}
-                        onChange={this.handleChange}
+                        onChange={this.handleInputChange}
                       />
                     </label>
 
@@ -108,9 +113,10 @@ class UpdateItem extends Component {
                         placeholder="Enter A Description"
                         required
                         defaultValue={data.item.description}
-                        onChange={this.handleChange}
+                        onChange={this.handleInputChange}
                       />
                     </label>
+
                     <button type="submit">
                       Sav{loading ? "ing" : "e"} Changes
                     </button>
@@ -124,6 +130,3 @@ class UpdateItem extends Component {
     );
   }
 }
-
-export default UpdateItem;
-export { UPDATE_ITEM_MUTATION };
