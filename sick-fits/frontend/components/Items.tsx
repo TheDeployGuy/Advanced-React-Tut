@@ -3,6 +3,7 @@ import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import styled from "styled-components";
 import Item from "../components/Item";
+import Pagination from "../components/Pagination";
 
 // GQL is a function that takes a GQL query, it is advised to keep the queries in the files they are used in, if they are going to be used anywhere else then it can be exported and imported.
 export const ALL_ITEMS_QUERY = gql`
@@ -30,18 +31,19 @@ const Itemslist = styled.div`
   margin: 0 auto;
 `;
 
-export default class Items extends React.Component {
+export default class Items extends React.Component<{
+  page: number;
+}> {
   render() {
     return (
       <Center>
-        <p>Items!</p>
+        <Pagination page={this.props.page} />
         {/* Query is a component that takes a query as props and will preform your query against the backend, it will then provide the payload via context in the data prop, it also provides error and loading states. */}
         <Query query={ALL_ITEMS_QUERY}>
           {({ data, error, loading }) => {
             // It is a good idea to check the loading and error states as the component may render and if you are trying to access a property on the data object that hasn't resolved you will get 'cannot read property X of undefined'
             if (loading) return <p>Loading</p>;
             if (error) return <p>Error: {error.message} </p>;
-            console.log(data);
             return (
               <Itemslist>
                 {data.items.map(item => (
@@ -51,6 +53,7 @@ export default class Items extends React.Component {
             );
           }}
         </Query>
+        <Pagination page={this.props.page} />
       </Center>
     );
   }

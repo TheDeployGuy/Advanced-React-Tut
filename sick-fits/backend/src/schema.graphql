@@ -16,4 +16,5 @@ type Query {
   items: [Item]!
   #   ItemWhereUniqueInput comes from prisma.graphql, you could just add an ID here but it is good to keep it the same as primsa is expecting.
   item(where: ItemWhereUniqueInput!): Item
+  itemsConnection(where: ItemWhereInput): ItemConnection!
 }
