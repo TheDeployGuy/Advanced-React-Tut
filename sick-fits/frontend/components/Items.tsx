@@ -4,11 +4,12 @@ import gql from "graphql-tag";
 import styled from "styled-components";
 import Item from "../components/Item";
 import Pagination from "../components/Pagination";
+import { perPage } from "../config";
 
 // GQL is a function that takes a GQL query, it is advised to keep the queries in the files they are used in, if they are going to be used anywhere else then it can be exported and imported.
 export const ALL_ITEMS_QUERY = gql`
-  query ALL_ITEMS_QUERY {
-    items {
+  query ALL_ITEMS_QUERY($skip: Int = 0, $first: Int = ${perPage}) {
+    items(first: $first, skip: $skip, orderBy: createdAt_DESC) {
       id
       title
       price
@@ -39,7 +40,12 @@ export default class Items extends React.Component<{
       <Center>
         <Pagination page={this.props.page} />
         {/* Query is a component that takes a query as props and will preform your query against the backend, it will then provide the payload via context in the data prop, it also provides error and loading states. */}
-        <Query query={ALL_ITEMS_QUERY}>
+        <Query
+          query={ALL_ITEMS_QUERY}
+          variables={{
+            skip: this.props.page * perPage - perPage
+          }}
+        >
           {({ data, error, loading }) => {
             // It is a good idea to check the loading and error states as the component may render and if you are trying to access a property on the data object that hasn't resolved you will get 'cannot read property X of undefined'
             if (loading) return <p>Loading</p>;
