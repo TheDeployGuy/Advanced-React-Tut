@@ -3,3 +3,9 @@ export interface PageQueryProps {
     id: string;
   };
 }
+
+export interface ResetQueryProps {
+  query: {
+    resetToken: string;
+  };
+}
