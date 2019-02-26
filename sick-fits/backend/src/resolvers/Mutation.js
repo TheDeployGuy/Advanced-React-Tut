@@ -1,5 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { randomBytes } = require("crypto");
+const { promisify } = require("util");
 
 const Mutations = {
   async createItem(parent, args, ctx, info) {
@@ -51,7 +53,7 @@ const Mutations = {
   async signup(parent, args, ctx, info) {
     // lowercase their email
     args.email = args.email.toLowerCase();
-    // hast their password
+    // hash their password
     const password = await bcrypt.hash(args.password, 11);
     // create the user in the database
     const user = await ctx.db.mutation.createUser(
@@ -115,6 +117,76 @@ const Mutations = {
   signout(parent, args, ctx, info) {
     ctx.response.clearCookie("token");
     return { message: "You have been successfully signed out!" };
+  },
+  async requestReset(parent, args, ctx, info) {
+    // 1. Check if there is a user
+    const user = await ctx.db.query.user({ where: { email: args.email } });
+    if (!user) {
+      throw new Error(`No user was found matching ${args.email}`);
+    }
+
+    // 2. Set a reset token and expiry on that user
+    const randomBytesPromise = promisify(randomBytes);
+    const resetToken = (await randomBytesPromise(20)).toString("hex");
+    const resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
+    const res = await ctx.db.mutation.updateUser({
+      where: { email: args.email },
+      data: { resetToken, resetTokenExpiry }
+    });
+    return {
+      message:
+        "Instructions for resetting your password has been sent to your email"
+    };
+    // 3. Email them that reset token
+  },
+  async resetPassword(parent, args, ctx, info) {
+    // 1. Check if passwords match
+    if (args.password !== args.confirmPassword) {
+      throw new Error("Passwords do not match");
+    }
+    // 2. Check if it's a real reset token
+    // 3. Check if the token expired
+    // We are querying all users that match the given condition, if their token is expired or is not correct it won't return anything. We cannot use the regular User query for this as that only accepts a email or name to query on.
+    const [user] = await ctx.db.query.users({
+      where: {
+        resetToken: args.resetToken,
+        resetTokenExpiry_gte: Date.now() - 3600000
+      }
+    });
+
+    if (!user) {
+      throw new Error("This token is invalid or expired");
+    }
+
+    // 4. Hash their new password
+    const password = await bcrypt.hash(args.password, 11);
+
+    // 5. Save the new password to the user and remove the old resetToken
+    const updatedUser = await ctx.db.mutation.updateUser({
+      where: { email: user.email },
+      data: {
+        password,
+        resetToken: null,
+        resetTokenExpiry: null
+      }
+    });
+
+    // 6. Generate the JWT
+    const token = jwt.sign(
+      {
+        userId: user.id
+      },
+      process.env.APP_SECRET
+    );
+
+    // 7. Set the JWT cookie
+    ctx.response.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
+    });
+
+    // 8. return the new user
+    return updatedUser;
   }
 };
 
