@@ -111,6 +111,10 @@ const Mutations = {
 
     // return user to browser
     return user;
+  },
+  signout(parent, args, ctx, info) {
+    ctx.response.clearCookie("token");
+    return { message: "You have been successfully signed out!" };
   }
 };
 
