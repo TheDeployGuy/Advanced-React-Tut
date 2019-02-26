@@ -5,28 +5,23 @@ import Form from "./styles/Form";
 import Error from "./ErrorMessage";
 import { CURRENT_USER_QUERY } from "./User";
 
-const SIGNUP_MUTATION = gql`
-  mutation SIGNUP_MUTATION(
-    $email: String!
-    $name: String!
-    $password: String!
-  ) {
-    signup(email: $email, name: $name, password: $password) {
+const SIGNIN_MUTATION = gql`
+  mutation SIGNIN_MUTATION($email: String!, $password: String!) {
+    signin(email: $email, password: $password) {
       id
       email
-      name
     }
   }
 `;
 
-interface SignupUserState {
+interface SigninUserState {
   email: string;
   name: string;
   password: string;
 }
 
-export default class Signup extends React.Component<{}, SignupUserState> {
-  state: SignupUserState = {
+export default class Signin extends React.Component<{}, SigninUserState> {
+  state: SigninUserState = {
     name: "",
     password: "",
     email: ""
@@ -39,22 +34,23 @@ export default class Signup extends React.Component<{}, SignupUserState> {
   render() {
     return (
       <Mutation
-        mutation={SIGNUP_MUTATION}
+        mutation={SIGNIN_MUTATION}
         variables={this.state}
+        // tell graphql to refetch this query when this mutation happens
         refetchQueries={[{ query: CURRENT_USER_QUERY }]}
       >
-        {(signup, { error, loading }) => {
+        {(signin, { error, loading }) => {
           return (
             <Form
               method="post"
               onSubmit={async e => {
                 e.preventDefault();
-                await signup();
+                await signin();
                 this.setState({ name: "", email: "", password: "" });
               }}
             >
               <fieldset disabled={loading} aria-busy={loading}>
-                <h2>Sign Up for An Account</h2>
+                <h2>Sign into your account</h2>
                 <Error error={error} />
                 <label htmlFor="email">
                   Email
@@ -63,16 +59,6 @@ export default class Signup extends React.Component<{}, SignupUserState> {
                     name="email"
                     placeholder="email"
                     value={this.state.email}
-                    onChange={this.saveToState}
-                  />
-                </label>
-                <label htmlFor="name">
-                  Name
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="name"
-                    value={this.state.name}
                     onChange={this.saveToState}
                   />
                 </label>
@@ -87,7 +73,7 @@ export default class Signup extends React.Component<{}, SignupUserState> {
                   />
                 </label>
 
-                <button type="submit">Sign Up!</button>
+                <button type="submit">Sign In</button>
               </fieldset>
             </Form>
           );

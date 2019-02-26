@@ -81,6 +81,36 @@ const Mutations = {
 
     // return user to browser
     return user;
+  },
+  async signin(parent, { email, password }, ctx, info) {
+    // check if there is a user
+    const user = await ctx.db.query.user({ where: { email } });
+    if (!user) {
+      throw new Error(`No user was found matching ${email}`);
+    }
+
+    // Check password
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) {
+      throw new Error(`Invalid Password`);
+    }
+
+    // create the JWT token for them
+    const token = jwt.sign(
+      {
+        userId: user.id
+      },
+      process.env.APP_SECRET
+    );
+
+    // Set the JWT as a cookie on the response
+    ctx.response.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
+    });
+
+    // return user to browser
+    return user;
   }
 };
 
