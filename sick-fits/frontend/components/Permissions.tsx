@@ -38,14 +38,14 @@ const Permissions: React.SFC<{}> = props => (
                 <th>Name</th>
                 <th>Email</th>
                 {possiblePermissions.map(permission => (
-                  <th>{permission}</th>
+                  <th key={permission}>{permission}</th>
                 ))}
                 <th>👇🏻</th>
               </tr>
             </thead>
             <tbody>
               {data.users.map(user => (
-                <User user={user} />
+                <UserPermissions key={user.id} user={user} />
               ))}
             </tbody>
           </Table>
@@ -55,13 +55,44 @@ const Permissions: React.SFC<{}> = props => (
   </Query>
 );
 
-class User extends React.Component<{
+interface UserPermissionProps {
   user: {
     id: string;
     name: string;
     email: string;
+    permissions: [string];
   };
-}> {
+}
+
+interface UserPermissionsState {
+  permissions: Array<string>;
+}
+
+class UserPermissions extends React.Component<
+  UserPermissionProps,
+  UserPermissionsState
+> {
+  state: UserPermissionsState = {
+    permissions: this.props.user.permissions
+  };
+
+  handlePermissionChange = e => {
+    const checkbox = e.target;
+    let updatedPermissions = [...this.state.permissions];
+    if (checkbox.checked) {
+      updatedPermissions.push(checkbox.value);
+    } else {
+      updatedPermissions = updatedPermissions.filter(
+        permission => permission !== checkbox.value
+      );
+    }
+    this.setState({
+      permissions: updatedPermissions
+    });
+
+    console.log(updatedPermissions);
+  };
+
   render() {
     const user = this.props.user;
     return (
@@ -69,9 +100,14 @@ class User extends React.Component<{
         <td>{user.name}</td>
         <td>{user.email}</td>
         {possiblePermissions.map(permission => (
-          <td>
+          <td key={permission}>
             <label htmlFor={`${user.id}-permission-${permission}`}>
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                checked={this.state.permissions.includes(permission)}
+                onChange={this.handlePermissionChange}
+                value={permission}
+              />
             </label>
           </td>
         ))}
