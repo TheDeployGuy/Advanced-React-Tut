@@ -36,6 +36,7 @@ type Query {
   item(where: ItemWhereUniqueInput!): Item
   itemsConnection(where: ItemWhereInput): ItemConnection!
   me: User
+  users: [User]!
 }
 
 # Becase we have fields on the Prisma User type that we don't want exposed we need to redefine them.
