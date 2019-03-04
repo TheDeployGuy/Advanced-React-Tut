@@ -3,6 +3,7 @@ import Router from "next/router";
 import NProgress from "nprogress";
 import styled from "styled-components";
 import Nav from "./Nav";
+import Cart from "./Cart";
 
 // Using Next.js router with nprogress to get a loader type on route change
 Router.onRouteChangeStart = () => {
@@ -71,7 +72,7 @@ export default function Header() {
       <div className="sub-bar">
         <p>Search</p>
       </div>
-      <div>Cart</div>
+      <Cart />
     </StyledHeader>
   );
 }
