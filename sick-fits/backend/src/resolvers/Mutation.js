@@ -5,6 +5,7 @@ const { promisify } = require("util");
 const { transport, makeANiceEmail } = require("../mail");
 const { hasPermission, isUserLoggedIn } = require("../utils");
 
+const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 const Mutations = {
   async createItem(parent, args, ctx, info) {
     //Check if they are logged in
@@ -96,7 +97,7 @@ const Mutations = {
     // Set the JWT as a cookie on the response
     ctx.response.cookie("token", token, {
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
+      maxAge: ONE_YEAR
     });
 
     // return user to browser
@@ -126,7 +127,7 @@ const Mutations = {
     // Set the JWT as a cookie on the response
     ctx.response.cookie("token", token, {
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
+      maxAge: ONE_YEAR
     });
 
     // return user to browser
@@ -211,7 +212,7 @@ const Mutations = {
     // 7. Set the JWT cookie
     ctx.response.cookie("token", token, {
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
+      maxAge: ONE_YEAR
     });
 
     // 8. return the new user
