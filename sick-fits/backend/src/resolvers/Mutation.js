@@ -5,10 +5,14 @@ const { promisify } = require("util");
 const { transport, makeANiceEmail } = require("../mail");
 const { hasPermission } = require("../utils");
 
+function isUserLoggedIn(ctx) {
+  return ctx.request.userId;
+}
+
 const Mutations = {
   async createItem(parent, args, ctx, info) {
     //Check if they are logged in
-    if (!ctx.request.userId) {
+    if (!isUserLoggedIn(ctx)) {
       throw new Error("You must be logged in to do that!");
     }
 
@@ -219,7 +223,7 @@ const Mutations = {
   },
   async updatePermissions(parent, args, ctx, info) {
     // 1. Check if they are logged in
-    if (!ctx.request.userId) {
+    if (!isUserLoggedIn(ctx)) {
       throw new Error("You must be logged in to do that!");
     }
     // 2. Query the current user
