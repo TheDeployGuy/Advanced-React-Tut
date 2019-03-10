@@ -245,9 +245,8 @@ const Mutations = {
   async addToCart(parent, args, ctx, info) {
     // 1. Make sure they are signed in
     const { userId } = ctx.request;
-    if (!userId) {
-      throw new Error("You must be signed in soooon");
-    }
+
+    isUserLoggedIn(ctx);
     // 2. Query the users current cart
     const [existingCartItem] = await ctx.db.query.cartItems({
       where: {
