@@ -14,4 +14,9 @@ function hasPermission(user, permissionsNeeded) {
   }
 }
 
+function isUserLoggedIn(ctx) {
+  return ctx.request.userId;
+}
+
 exports.hasPermission = hasPermission;
+exports.isUserLoggedIn = isUserLoggedIn;

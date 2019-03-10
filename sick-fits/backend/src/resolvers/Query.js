@@ -7,7 +7,7 @@
     info: Information about the request
 */
 const { forwardTo } = require("prisma-binding");
-const { hasPermission } = require("../utils");
+const { hasPermission, isUserLoggedIn } = require("../utils");
 
 const Query = {
   items: forwardTo("db"), // If your query matches exactly query in your prisma model(i.e no custom logic to check auth status or anything), you can simply just forward the query onto prisma.
@@ -15,7 +15,7 @@ const Query = {
   itemsConnection: forwardTo("db"),
   me(parent, args, ctx, info) {
     // check if there is a current user id
-    if (!ctx.request.userId) {
+    if (!isUserLoggedIn(ctx)) {
       return null;
     }
     return ctx.db.query.user(
@@ -27,7 +27,7 @@ const Query = {
   },
   async users(parent, args, ctx, info) {
     // 1. Check if they are logged in
-    if (!ctx.request.userId) {
+    if (!isUserLoggedIn(ctx)) {
       throw new Error("You must be logged in");
     }
 
