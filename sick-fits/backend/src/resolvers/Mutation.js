@@ -9,9 +9,7 @@ const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 const Mutations = {
   async createItem(parent, args, ctx, info) {
     //Check if they are logged in
-    if (!isUserLoggedIn(ctx)) {
-      throw new Error("You must be logged in to do that!");
-    }
+    isUserLoggedIn(ctx);
 
     const item = await ctx.db.mutation.createItem(
       {
@@ -220,9 +218,7 @@ const Mutations = {
   },
   async updatePermissions(parent, args, ctx, info) {
     // 1. Check if they are logged in
-    if (!isUserLoggedIn(ctx)) {
-      throw new Error("You must be logged in to do that!");
-    }
+    isUserLoggedIn(ctx);
     // 2. Query the current user
     const user = await ctx.db.query.user(
       { where: { id: ctx.request.userId } },

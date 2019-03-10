@@ -15,7 +15,9 @@ function hasPermission(user, permissionsNeeded) {
 }
 
 function isUserLoggedIn(ctx) {
-  return ctx.request.userId;
+  if (!ctx.request.userId) {
+    throw new Error("You must be logged in to do that!");
+  }
 }
 
 exports.hasPermission = hasPermission;

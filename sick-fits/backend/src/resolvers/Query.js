@@ -15,7 +15,7 @@ const Query = {
   itemsConnection: forwardTo("db"),
   me(parent, args, ctx, info) {
     // check if there is a current user id
-    if (!isUserLoggedIn(ctx)) {
+    if (!ctx.request.userId) {
       return null;
     }
     return ctx.db.query.user(
@@ -27,9 +27,7 @@ const Query = {
   },
   async users(parent, args, ctx, info) {
     // 1. Check if they are logged in
-    if (!isUserLoggedIn(ctx)) {
-      throw new Error("You must be logged in");
-    }
+    isUserLoggedIn(ctx);
 
     // 2. Check if the user has the permissions to query all users
     hasPermission(ctx.request.user, ["ADMIN", "PERMISSIONUPDATE"]);
