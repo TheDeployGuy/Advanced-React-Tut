@@ -31,6 +31,26 @@ type Item {
 type CartItem {
   id: ID! @unique
   quantity: Int! @default(value: 1)
-  item: Item! # Relationship to Item
+  item: Item # Relationship to Item
   user: User! # Relationship to User
+}
+
+# We don't just accosiate the OrderItem with an Item, as the item may be deleted or a price change would happen and we wouldn't want that to impact the Order Item as we want to use it as a point in time this was what the order was.
+type OrderItem {
+  id: ID! @unique
+  title: String!
+  description: String!
+  image: String
+  largeImage: String!
+  price: Int!
+  quantity: Int! @default(value: 1)
+  user: User
+}
+
+type Order {
+  id: ID! @unique
+  items: [OrderItem!]!
+  total: Int!
+  user: User!
+  charge: String!
 }

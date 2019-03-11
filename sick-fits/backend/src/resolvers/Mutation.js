@@ -4,6 +4,7 @@ const { randomBytes } = require("crypto");
 const { promisify } = require("util");
 const { transport, makeANiceEmail } = require("../mail");
 const { hasPermission, isUserLoggedIn } = require("../utils");
+const stripe = require("../stripe");
 
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 const Mutations = {
@@ -26,8 +27,6 @@ const Mutations = {
       info
     );
 
-    console.log(item);
-
     return item;
   },
   updateItem(parent, args, ctx, info) {
@@ -47,11 +46,10 @@ const Mutations = {
     );
   },
   async deleteItem(parent, args, ctx, info) {
-    const where = { id: args.id };
     // 1. Find the item
     const item = await ctx.db.query.item(
       {
-        where
+        where: { id: args.id }
       },
       `{id title user { id }}`
     ); // Usually we would pass info as the 2nd arg here but that will resolve the mutation which we don't want we want to preform some checks so instead we put raw graphql
@@ -278,6 +276,88 @@ const Mutations = {
       },
       info
     );
+  },
+  async removeFromCart(parent, args, ctx, info) {
+    // 1. Find the cart item
+    const cartItem = await ctx.db.query.cartItem(
+      {
+        where: {
+          id: args.id
+        }
+      },
+      `{ id, user { id }}`
+    );
+    // 1.5 Make sure we found an item
+    if (!cartItem) throw new Error("No CartItem Found!");
+    // 2. Make sure they own that cart item
+    if (cartItem.user.id !== ctx.request.userId) {
+      throw new Error("Cheatin huhhhh");
+    }
+    // 3. Delete that cart item
+    return ctx.db.mutation.deleteCartItem(
+      {
+        where: { id: args.id }
+      },
+      info
+    );
+  },
+  async createOrder(parent, args, ctx, info) {
+    // 1. Query the current user and make sure they are signed in
+    isUserLoggedIn(ctx);
+    const user = await ctx.db.query.user(
+      {
+        where: { id: ctx.request.userId }
+      },
+      `{
+      id
+      name
+      email
+      cart {
+        id
+        quantity
+        item { title price id description image largeImage }
+      }}`
+    );
+    // 2. Recalculate the total for the price (never trust the client calculation)
+    const amount = user.cart.reduce(
+      (tally, cartItem) => tally + cartItem.item.price * cartItem.quantity,
+      0
+    );
+    // 3. Create the stripe charge
+    const charge = await stripe.charges.create({
+      amount,
+      currency: "USD",
+      source: args.token
+    });
+
+    // 4. Convert the CartItems to OrderItems
+    const orderItems = user.cart.map(cartItem => {
+      const orderItem = {
+        ...cartItem.item,
+        quantity: cartItem.quantity,
+        user: { connect: { id: ctx.request.userId } }
+      };
+      delete orderItem.id;
+      return orderItem;
+    });
+    // 5. Create the order
+    const order = await ctx.db.mutation.createOrder({
+      data: {
+        total: charge.amount,
+        charge: charge.id,
+        items: { create: orderItems },
+        user: { connect: { id: ctx.request.userId } }
+      }
+    });
+    // 6. Clear the users cart , delete cartItem
+    const cartItemIds = user.cart.map(cartItem => cartItem.id);
+    await ctx.db.mutation.deleteManyCartItems({
+      where: {
+        id_in: cartItemIds
+      }
+    });
+    // 7. Return order to the client
+    return order;
   }
 };
 

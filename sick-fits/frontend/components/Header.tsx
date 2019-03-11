@@ -4,6 +4,7 @@ import NProgress from "nprogress";
 import styled from "styled-components";
 import Nav from "./Nav";
 import Cart from "./Cart";
+import AutoComplete from "./Search";
 
 // Using Next.js router with nprogress to get a loader type on route change
 Router.onRouteChangeStart = () => {
@@ -70,7 +71,7 @@ export default function Header() {
         <Nav />
       </div>
       <div className="sub-bar">
-        <p>Search</p>
+        <AutoComplete />
       </div>
       <Cart />
     </StyledHeader>
