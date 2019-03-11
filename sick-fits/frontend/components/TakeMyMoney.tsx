@@ -33,7 +33,7 @@ export default class TakeMyMoney extends React.Component {
       variables: {
         token: res.id
       }
-    }).catch(err => console.log(err));
+    }).catch(err => alert(err));
 
     console.log(order);
   };
