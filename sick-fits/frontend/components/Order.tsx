@@ -40,6 +40,7 @@ export default class Order extends React.Component<OrderProps, {}> {
           if (error) return <Error error={error} />;
           if (loading) return <p>Loading...</p>;
           const order = data.order;
+          console.log(order.createdAt);
           return (
             <OrderStyles data-test="order">
               <Head>

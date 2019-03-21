@@ -55,6 +55,19 @@ const Query = {
     }
     // 4. Return the order
     return order;
+  },
+  async orders(parents, args, ctx, info) {
+    // 1. Check if they are logged in
+    isUserLoggedIn(ctx);
+
+    return ctx.db.query.orders(
+      {
+        where: {
+          user: { id: ctx.request.userId }
+        }
+      },
+      info
+    );
   }
 };
 
