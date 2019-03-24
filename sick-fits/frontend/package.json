@@ -28,6 +28,7 @@
     "enzyme-adapter-react-16": "^1.5.0",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.9.2",
+    "jest-styled-components": "^6.3.1",
     "lodash.debounce": "^4.0.8",
     "next": "^7.0.0",
     "next-with-apollo": "^3.1.3",
@@ -41,6 +42,7 @@
     "react-transition-group": "^2.5.0",
     "styled-components": "^3.4.9",
     "ts-jest": "^24.0.0",
+    "typescript-babel-jest": "^1.0.6",
     "waait": "^1.0.2"
   },
   "devDependencies": {
@@ -49,22 +51,28 @@
     "casual": "^1.5.19",
     "enzyme-to-json": "^3.3.4",
     "graphql-tools": "^4.0.0",
-    "jest": "^23.6.0",
+    "jest": "^24.5.0",
     "jest-transform-graphql": "^2.1.0",
     "typescript": "^3.3.4000"
   },
   "jest": {
-    "setupTestFrameworkScriptFile": "<rootDir>/jest.setup.js",
+    "globals": {
+      "ts-jest": {
+        "tsConfigFile": "tsconfig.json"
+      }
+    },
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.ts"
+    ],
     "testPathIgnorePatterns": [
       "<rootDir>/.next/",
       "<rootDir>/node_modules/"
     ],
     "transform": {
       "\\.(gql|graphql)$": "jest-transform-graphql",
-      "^.+\\.tsx?$": "ts-jest",
-      ".*": "babel-jest"
+      "^.+\\.(tsx|ts|js)$": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js?|jsx?|tsx?)$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
