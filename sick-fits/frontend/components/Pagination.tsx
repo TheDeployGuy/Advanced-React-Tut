@@ -20,7 +20,7 @@ const Pagination: React.SFC<{
 }> = props => {
   return (
     <Query query={PAGINATION_QUERY}>
-      {({ data, loading, error }) => {
+      {({ data, loading }) => {
         if (loading) return <p>Loading...</p>;
         const count = data.itemsConnection.aggregate.count;
         const pages = Math.ceil(count / perPage);

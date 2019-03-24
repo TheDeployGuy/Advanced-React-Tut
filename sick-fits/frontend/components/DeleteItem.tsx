@@ -18,6 +18,7 @@ const DELETE_ITEM_MUTATION = gql`
 
 export default class DeleteItem extends React.Component<DeleteItemProps> {
   deleteItem = (e, deleteItemMutation: MutationFn) => {
+    e.preventDefault();
     if (confirm("Are you sure you want to delete this item")) {
       deleteItemMutation();
     }
@@ -44,7 +45,7 @@ export default class DeleteItem extends React.Component<DeleteItemProps> {
         }}
         update={this.update}
       >
-        {(deleteItem, { error }) => (
+        {deleteItem => (
           <button onClick={e => this.deleteItem(e, deleteItem)}>
             {this.props.children}
           </button>
